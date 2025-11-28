@@ -2,10 +2,31 @@ from src.interfaces import ISQLGenerator
 from src.domain.models import EnergySeries
 
 class PostgresExporter(ISQLGenerator):
+    """
+    Generates PostgreSQL INSERT statements for energy data.
+
+    Attributes:
+        table_name (str): The name of the database table to insert into.
+    """
     def __init__(self, table_name: str = "readings"):
+        """
+        Initializes the PostgresExporter.
+
+        Args:
+            table_name (str, optional): The target table name. Defaults to "readings".
+        """
         self.table_name = table_name
 
     def generate_sql(self, series: EnergySeries) -> str:
+        """
+        Generates a SQL INSERT statement for all readings in the series.
+
+        Args:
+            series (EnergySeries): The energy data series.
+
+        Returns:
+            str: A string containing the SQL INSERT statement. Returns empty string if series is empty.
+        """
         if not series.readings:
             return ""
         

@@ -8,8 +8,30 @@ from src.interfaces import IGraphGenerator
 from src.domain.models import EnergySeries
 
 class GraphPlotter(IGraphGenerator):
+    """
+    Generates visualizations for energy data using matplotlib.
+    """
     def generate_graphs(self, series: EnergySeries, output_dir: str, output_file: str = None, 
                        smoothing_method: str = None, smoothing_param: float = None) -> List[str]:
+        """
+        Generates graphs and saves them to the specified directory.
+
+        Supports smoothing methods:
+        - 'rolling': Rolling mean smoothing.
+        - 'spline': Cubic spline interpolation.
+
+        Also calculates and displays total import/export values in the graph title and legend.
+
+        Args:
+            series (EnergySeries): The energy data to visualize.
+            output_dir (str): The directory to save the generated graphs.
+            output_file (str, optional): The filename for the output graph. Defaults to None.
+            smoothing_method (str, optional): The smoothing method to apply ('rolling' or 'spline'). Defaults to None.
+            smoothing_param (float, optional): Parameter for the smoothing method (e.g., window size for rolling). Defaults to None.
+
+        Returns:
+            List[str]: A list of file paths to the generated graphs.
+        """
         if series.df.empty:
             return []
         

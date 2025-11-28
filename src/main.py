@@ -7,6 +7,12 @@ from datetime import datetime
 import pandas as pd
 
 def main():
+    """
+    Main entry point for the Energy Stats Processor CLI.
+
+    Parses command-line arguments, orchestrates the data ingestion, processing,
+    SQL generation, and graph plotting workflows.
+    """
     parser = argparse.ArgumentParser(description="Energy Stats Processor")
     parser.add_argument("input_file", help="Path to input CSV file")
     parser.add_argument("--output-sql", default="output.sql", help="Path to output SQL file")
@@ -31,7 +37,6 @@ def main():
         print(f"Error reading file: {e}")
         return
 
-    # Filter by date if requested
     # Filter by date if requested
     if args.start_date or args.end_date:
         start = datetime.strptime(args.start_date, "%Y-%m-%d") if args.start_date else None

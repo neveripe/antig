@@ -6,12 +6,33 @@ import pandas as pd
 
 @dataclass
 class EnergyReading:
+    """
+    Represents a single energy reading at a specific point in time.
+
+    Attributes:
+        timestamp (datetime): The date and time of the reading.
+        import_energy (float): The amount of energy imported (kWh).
+        export_energy (float): The amount of energy exported (kWh).
+    """
     timestamp: datetime
     import_energy: float
     export_energy: float
 
 class EnergySeries:
+    """
+    A collection of EnergyReading objects with methods for statistical analysis and filtering.
+
+    Attributes:
+        readings (List[EnergyReading]): The list of raw energy readings.
+        df (pd.DataFrame): A pandas DataFrame representation of the readings for efficient manipulation.
+    """
     def __init__(self, readings: List[EnergyReading]):
+        """
+        Initializes the EnergySeries with a list of readings.
+
+        Args:
+            readings (List[EnergyReading]): The list of energy readings.
+        """
         self.readings = readings
         # Create a DataFrame for easier manipulation
         data = [
@@ -30,8 +51,14 @@ class EnergySeries:
 
     def get_daily_stats(self) -> Dict[str, Dict[str, float]]:
         """
-        Returns a dictionary where key is date (YYYY-MM-DD) and value is a dict of stats:
-        {'import_sum': float, 'export_sum': float, 'net': float}
+        Calculates daily statistics for import, export, and net energy.
+
+        Returns:
+            Dict[str, Dict[str, float]]: A dictionary where the key is the date (YYYY-MM-DD) 
+            and the value is a dictionary containing:
+                - 'import_sum': Total import energy for the day.
+                - 'export_sum': Total export energy for the day.
+                - 'net': Net energy (import - export) for the day.
         """
         if self.df.empty:
             return {}
@@ -54,7 +81,14 @@ class EnergySeries:
 
     def get_monthly_stats(self) -> Dict[str, Dict[str, float]]:
         """
-        Returns a dictionary where key is month (YYYY-MM) and value is a dict of stats.
+        Calculates monthly statistics for import, export, and net energy.
+
+        Returns:
+            Dict[str, Dict[str, float]]: A dictionary where the key is the month (YYYY-MM) 
+            and the value is a dictionary containing:
+                - 'import_sum': Total import energy for the month.
+                - 'export_sum': Total export energy for the month.
+                - 'net': Net energy (import - export) for the month.
         """
         if self.df.empty:
             return {}
@@ -77,7 +111,10 @@ class EnergySeries:
 
     def calculate_net_consumption(self) -> float:
         """
-        Total Import - Total Export
+        Calculates the total net consumption over the entire series.
+
+        Returns:
+            float: Total Import - Total Export.
         """
         if self.df.empty:
             return 0.0
@@ -86,8 +123,16 @@ class EnergySeries:
     def filter_by_date(self, start: datetime = None, end: datetime = None) -> 'EnergySeries':
         """
         Returns a new EnergySeries filtered by the given start and end dates (inclusive).
+
         Timestamps in the series are assumed to be timezone-aware if start/end are.
         If start/end are naive, they are assumed to be in the same timezone as the series (or UTC if series is UTC).
+
+        Args:
+            start (datetime, optional): The start date/time for filtering. Defaults to None.
+            end (datetime, optional): The end date/time for filtering. Defaults to None.
+
+        Returns:
+            EnergySeries: A new EnergySeries instance containing only the filtered readings.
         """
         if self.df.empty:
             return EnergySeries([])

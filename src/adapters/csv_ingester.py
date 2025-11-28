@@ -4,10 +4,41 @@ from src.interfaces import IDataSource
 from src.domain.models import EnergySeries, EnergyReading
 
 class CSVIngester(IDataSource):
+    """
+    Ingests energy data from CSV files with specific formatting and timezone handling.
+
+    Attributes:
+        timezone (str): The timezone of the input data (default: "Europe/Dublin").
+    """
     def __init__(self, timezone: str = "Europe/Dublin"):
+        """
+        Initializes the CSVIngester.
+
+        Args:
+            timezone (str, optional): The timezone of the input data. Defaults to "Europe/Dublin".
+        """
         self.timezone = timezone
 
     def parse(self, source: str) -> EnergySeries:
+        """
+        Parses a CSV file containing energy readings.
+
+        Handles:
+            - Column renaming.
+            - Naive timestamp parsing.
+            - Reverse chronological order detection and correction.
+            - Timezone localization and UTC conversion.
+            - Robust DST handling (ambiguous times) using custom inference.
+
+        Args:
+            source (str): The path to the CSV file.
+
+        Returns:
+            EnergySeries: The parsed energy series with UTC timestamps.
+
+        Raises:
+            ValueError: If timestamp localization fails.
+        """
         df = pd.read_csv(source)
         
         # Rename columns to standard names
@@ -113,42 +144,6 @@ class CSVIngester(IDataSource):
                 # Let's implement the "Drop detection" for the ambiguous flags.
                 # We need an array of booleans matching the length of the series.
                 # True = DST, False = STD.
-                
-                # We can use `tz_localize(..., ambiguous='NaT')` to find WHICH are ambiguous.
-                ambiguous_mask = s.dt.tz_localize(self.timezone, ambiguous='NaT').isna()
-                
-                if not ambiguous_mask.any():
-                    # Should not happen if 'infer' failed, unless it failed for other reasons
-                    raise
-                
-                # Now we only care about filling the True values in ambiguous_mask.
-                # We iterate through the series.
-                # We maintain a state `is_dst`.
-                # Initially, are we in DST?
-                # Usually yes, before the fallback.
-                # But what if we start in Winter?
-                # If we start in Winter, we are STD.
-                # But then we hit Spring (Gap).
-                # Then Summer (DST).
-                # Then Fallback (Ambiguous).
-                
-                # So, for the ambiguous times, they ONLY occur during the Fallback.
-                # So we ALWAYS enter the ambiguous period from DST.
-                # So `is_dst` should be True when we hit the ambiguous block.
-                # Then we see a drop in time -> Switch to False.
-                # Then we exit the ambiguous block.
-                
-                # So:
-                # 1. Identify ambiguous blocks.
-                # 2. Within each block, use the "Drop" logic.
-                
-                # Implementation:
-                # Create a boolean array `dst_flags` initialized to True (default to DST for ambiguous).
-                # Iterate through the series.
-                # If we see a time drop (t[i] < t[i-1]), and both are ambiguous (or close), flip state to False?
-                # Actually, simpler:
-                # Just find the index of the drop.
-                # Everything after the drop (within the ambiguous window) is False.
                 
                 # We can use `tz_localize(..., ambiguous='NaT')` to find WHICH are ambiguous.
                 ambiguous_mask = s.dt.tz_localize(self.timezone, ambiguous='NaT').isna()

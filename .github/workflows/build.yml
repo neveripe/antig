@@ -1,0 +1,65 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Tests
+      run: |
+        python -m pytest
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --onefile --name energy-processor --add-data "src:src" src/main.py
+      # Note: --add-data syntax differs slightly between OS, but PyInstaller usually handles simple cases.
+      # For Windows separator is ;, for Linux/Mac it is :
+      # However, since we are just importing python modules, --onefile usually finds them if they are in path.
+      # But src is a package. We might need to adjust PYTHONPATH or how we call it.
+      # Let's try simple build first. If src is a package, we might need to point to it.
+      # Actually, running from root, `src/main.py` imports `src...`. 
+      # PyInstaller analyzes imports. It should find them.
+
+    - name: Upload Artifact (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: energy-processor-windows
+        path: dist/energy-processor.exe
+
+    - name: Upload Artifact (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: energy-processor-linux
+        path: dist/energy-processor
+
+    - name: Upload Artifact (macOS)
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: energy-processor-macos
+        path: dist/energy-processor

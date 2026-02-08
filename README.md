@@ -66,3 +66,7 @@ python -m src.main my_data.csv --output-sql my_data.sql --smoothing-method splin
 ## Documentation
 
 See [walkthrough.md](walkthrough.md) for a detailed explanation of the implementation, design choices, and verification results.
+
+## Contributors
+
+- **Tavi** - AI Development Collaborator (Google Antigravity)

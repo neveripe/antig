@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "AI Generated (Google Antigravity)"},
+    {name = "Tavi", email = "ai.tavi@antigravity.dev"},
 ]
 keywords = ["energy", "electricity", "data-processing", "esb-networks", "visualization"]
 classifiers = [
@@ -41,8 +41,8 @@ dev = [
 energy-processor = "src.main:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/energy-stats-processor"
-Issues = "https://github.com/yourusername/energy-stats-processor/issues"
+Homepage = "https://github.com/neveripe/antig"
+Issues = "https://github.com/neveripe/antig/issues"
 
 [tool.setuptools]
 packages = ["src", "src.domain", "src.adapters"]

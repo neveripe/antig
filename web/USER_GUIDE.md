@@ -93,16 +93,17 @@ Follow these steps **exactly** as written:
 
 ### Step 8: Open the Energy Processor
 
-1. Find the file called **index.html** in the **dist** folder
-   - This should be inside the **web** folder where you saved/installed the Energy Processor
-   - If someone sent you the file, look where they told you to save it
-   - If you downloaded it, check your Downloads folder
-2. **Double-click** the index.html file
+1. Find the **index.html** file (or **Energy Processor.html** - it may have been renamed)
+   - Check where the person who gave you this file told you to save it
+   - If you downloaded it, check your **Downloads** folder
+   - It might be on your **Desktop**
+   - Look for a file with an icon that looks like a web browser
+2. **Double-click** the file to open it
 3. It will open in your web browser
 4. Wait **10-15 seconds** for the page to fully load
    - You'll know it's ready when you see: **"✅ Ready to process your energy data"**
 
-> **Can't find the file?** Ask the person who gave you this tool where they saved the index.html file. It should be in a folder called "web" then "dist".
+> **Can't find the file?** Search your computer for "index.html" or "Energy Processor". Ask the person who gave you this tool where they saved it.
 
 ### Step 9: Paste Your Data
 

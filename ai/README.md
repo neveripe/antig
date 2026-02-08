@@ -14,6 +14,10 @@ This folder contains documentation and plans generated during AI-assisted develo
 
 - **ci_fix_walkthrough.md** - Fixing GitHub Actions test failure caused by PyScript browser-only dependencies
 
+### Release Management (Feb 2026)
+
+- **release_v0.2_walkthrough.md** - v0.2.0 release creation: GitHub Actions workflow, ZIP packaging, and user guide updates
+
 ## Purpose
 
 These documents serve as:

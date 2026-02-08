@@ -10,7 +10,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 from js import document, window, console
-from pyodide.ffi import create_proxy
+from pyodide.ffi import create_proxy, to_js
+from pyscript import display
 
 # Add parent directory to path to import from src/
 sys.path.append('..')
@@ -166,14 +167,33 @@ def generate_graph_python(start_date_str, end_date_str):
         total_export = series.df['export_energy'].sum()
         net_consumption = series.calculate_net_consumption()
         
-        # Show stats
+        # DEBUG: Log raw values and types
+        console.log('=== DEBUG: Raw Stats Values ===')
+        console.log(f'total_import type: {type(total_import)}, value: {total_import}')
+        console.log(f'total_export type: {type(total_export)}, value: {total_export}')
+        console.log(f'net_consumption type: {type(net_consumption)}, value: {net_consumption}')
+        console.log(f'len(series.readings): {len(series.readings)}')
+        
+        # Show stats (convert to JavaScript object for proper property access)
         stats = {
-            'total_readings': len(series.readings),
-            'total_import': total_import,
-            'total_export': total_export,
-            'net_consumption': net_consumption
+            'total_readings': int(len(series.readings)),
+            'total_import': float(total_import),
+            'total_export': float(total_export),
+            'net_consumption': float(net_consumption)
         }
-        window.showStats(stats)
+        
+        # DEBUG: Log Python dict
+        console.log('=== DEBUG: Python Stats Dict ===')
+        console.log(f'stats dict: {stats}')
+        console.log(f'stats type: {type(stats)}')
+        
+        # DEBUG: Convert and log
+        stats_js = to_js(stats)
+        console.log('=== DEBUG: After to_js() ===')
+        console.log(f'stats_js type: {type(stats_js)}')
+        console.log('Calling window.showStats...')
+        
+        window.showStats(stats_js)
         
         # Create matplotlib figure
         plt.figure(figsize=(12, 6))

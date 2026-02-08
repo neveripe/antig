@@ -527,7 +527,7 @@ MPRN,Meter Serial Number,Read Value,Read Type,Read Date and End Time
     </div>
 
     <!-- PyScript Configuration -->
-    <script type="py" config='{"packages": ["pandas", "matplotlib", "numpy"]}' src="./energy_processor_web.py"></script>
+    <!-- BUILD_INJECT_PYTHON_HERE -->
 
     <script>
         // JavaScript <-> Python bridge
@@ -596,26 +596,50 @@ MPRN,Meter Serial Number,Read Value,Read Type,Read Date and End Time
         }
 
         function showStats(stats) {
+            // DEBUG: Log everything about the received stats object
+            console.log('=== DEBUG: JavaScript showStats() called ===');
+            console.log('stats object:', stats);
+            console.log('typeof stats:', typeof stats);
+            console.log('stats constructor:', stats?.constructor?.name);
+            console.log('Object.keys(stats):', Object.keys(stats || {}));
+            console.log('stats.total_readings:', stats?.total_readings);
+            console.log('stats.total_import:', stats?.total_import);
+            console.log('stats.total_export:', stats?.total_export);
+            console.log('stats.net_consumption:', stats?.net_consumption);
+
+            // Try to display the stats - with error handling
             const statsGrid = document.getElementById('statsGrid');
             statsGrid.style.display = 'grid';
-            statsGrid.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-label">Total Readings</div>
-                    <div class="stat-value">${stats.total_readings.toLocaleString()}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Import</div>
-                    <div class="stat-value">${stats.total_import.toFixed(2)} kWh</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Export</div>
-                    <div class="stat-value">${stats.total_export.toFixed(2)} kWh</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Net Consumption</div>
-                    <div class="stat-value">${stats.net_consumption.toFixed(2)} kWh</div>
-                </div>
-            `;
+
+            try {
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Total Readings</div>
+                        <div class="stat-value">${stats.total_readings.toLocaleString()}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Import</div>
+                        <div class="stat-value">${stats.total_import.toFixed(2)} kWh</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Export</div>
+                        <div class="stat-value">${stats.total_export.toFixed(2)} kWh</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Net Consumption</div>
+                        <div class="stat-value">${stats.net_consumption.toFixed(2)} kWh</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('=== DEBUG: Error rendering stats ===', error);
+                // Display whatever we can
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">DEBUG INFO</div>
+                        <div class="stat-value" style="font-size: 0.9rem;">Check browser console (F12) for details</div>
+                    </div>
+                `;
+            }
         }
 
         function generateGraph() {

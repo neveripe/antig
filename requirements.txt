@@ -1,0 +1,11 @@
+# Core dependencies
+# Note: These are also specified in pyproject.toml
+# For development, prefer: pip install -e .[dev]
+
+pandas>=2.0.0,<3.0.0
+matplotlib>=3.5.0,<4.0.0
+scipy>=1.10.0,<2.0.0
+
+# Development dependencies
+pytest>=7.0.0,<9.0.0
+pyinstaller>=5.0.0,<7.0.0

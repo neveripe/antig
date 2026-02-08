@@ -12,6 +12,9 @@ license = {text = "MIT"}
 authors = [
     {name = "Tavi", email = "ai.tavi@antigravity.dev"},
 ]
+maintainers = [
+    {name = "neveripe"},
+]
 keywords = ["energy", "electricity", "data-processing", "esb-networks", "visualization"]
 classifiers = [
     "Development Status :: 3 - Alpha",

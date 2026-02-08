@@ -4,13 +4,15 @@ A Python tool to process electricity supplier data, generate SQL for database in
 
 ## ⚠️ Disclaimer: AI-Generated Code
 
-**This project was fully written by Google Antigravity (an AI agent).**
+**This project was fully written by Tavi (Google Antigravity AI agent). The project owner has never written a single line of code.**
 
-*   **No Human Review:** The code in this repository has **never** been reviewed by a human being.
-*   **"Vibecoding":** This project represents the user's first experience in "vibecoding" — building software purely through AI interaction.
+*   **100% AI-Authored:** Every line of code, test, documentation, and configuration was written by Tavi.
+*   **No Human Code Review:** The code in this repository has **never** been reviewed by a human being from a code quality perspective.
+*   **"Vibecoding":** This project represents a "vibecoding" experience — building software purely through natural language interaction with AI.
+*   **Collaborative Development:** The project owner (neveripe) provided requirements, feedback, and testing, while Tavi implemented all technical solutions.
 *   **Future Development:** Any future development or maintenance might get stalled unless:
     *   New data samples are provided.
-    *   "Good" prompts for Google Antigravity are supplied to guide the AI.
+    *   "Good" prompts for Tavi (Google Antigravity) are supplied to guide the AI.
 
 ## Input Data Format
 
@@ -65,8 +67,11 @@ python -m src.main my_data.csv --output-sql my_data.sql --smoothing-method splin
 
 ## Documentation
 
-See [walkthrough.md](walkthrough.md) for a detailed explanation of the implementation, design choices, and verification results.
+See [docs/walkthrough.md](docs/walkthrough.md) for a detailed explanation of the implementation, design choices, and verification results.
+
+For project planning and roadmap, see the [docs/](docs/) directory.
 
 ## Contributors
 
-- **Tavi** - AI Development Collaborator (Google Antigravity)
+- **neveripe** - Project Owner & Maintainer *(did not write any code, all code was AI-generated)*
+- **Tavi** - AI Development Collaborator (Google Antigravity) *(wrote 100% of the codebase)*

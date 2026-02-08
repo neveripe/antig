@@ -37,7 +37,10 @@ jobs:
         cp web/USER_GUIDE.md release/
         cp README.md release/
         cd release
+        # Create versioned ZIP
         zip -r ../Energy-Processor-Web-${{ github.ref_name }}.zip .
+        # Create "latest" copy for convenience
+        zip -r ../Energy-Processor-Web-latest.zip .
     
     - name: Extract version and codename from tag
       id: version_info
@@ -57,6 +60,7 @@ jobs:
         name: "${{ steps.version_info.outputs.version }} - ${{ steps.version_info.outputs.codename }}"
         files: |
           Energy-Processor-Web-${{ github.ref_name }}.zip
+          Energy-Processor-Web-latest.zip
         body: |
           ## Energy Stats Processor ${{ steps.version_info.outputs.version }}
           **${{ steps.version_info.outputs.codename }}**

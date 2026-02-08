@@ -94,13 +94,15 @@ Follow these steps **exactly** as written:
 ### Step 8: Open the Energy Processor
 
 1. Find the file called **index.html** in the **dist** folder
-   - Full location: `Z:\never\vscode\antig\web\dist\index.html`
-2. **Double-click** the file
+   - This should be inside the **web** folder where you saved/installed the Energy Processor
+   - If someone sent you the file, look where they told you to save it
+   - If you downloaded it, check your Downloads folder
+2. **Double-click** the index.html file
 3. It will open in your web browser
 4. Wait **10-15 seconds** for the page to fully load
    - You'll know it's ready when you see: **"✅ Ready to process your energy data"**
 
-> **Can't find the file?** Ask the person who set this up for you where the file is located, or look in the `web\dist` folder where you downloaded/installed this program.
+> **Can't find the file?** Ask the person who gave you this tool where they saved the index.html file. It should be in a folder called "web" then "dist".
 
 ### Step 9: Paste Your Data
 

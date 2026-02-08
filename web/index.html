@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy Stats Processor - Web Edition</title>
-    
+
     <!-- PyScript -->
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-    
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
@@ -28,7 +29,7 @@
             --text-muted: #94a3b8;
             --border: #475569;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, var(--bg) 0%, #1a1f36 100%);
@@ -36,19 +37,19 @@
             min-height: 100vh;
             padding: 2rem;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 3rem;
             padding-bottom: 2rem;
             border-bottom: 2px solid var(--border);
         }
-        
+
         h1 {
             font-size: 2.5rem;
             font-weight: 800;
@@ -58,12 +59,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .subtitle {
             color: var(--text-muted);
             font-size: 1.1rem;
         }
-        
+
         .card {
             background: var(--surface);
             border-radius: 16px;
@@ -72,14 +73,14 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border);
         }
-        
+
         .card-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             color: var(--text);
         }
-        
+
         .upload-zone {
             border: 2px dashed var(--border);
             border-radius: 12px;
@@ -89,50 +90,50 @@
             transition: all 0.3s ease;
             background: var(--bg);
         }
-        
+
         .upload-zone:hover {
             border-color: var(--primary);
             background: rgba(37, 99, 235, 0.05);
         }
-        
+
         .upload-zone.dragover {
             border-color: var(--success);
             background: rgba(16, 185, 129, 0.1);
         }
-        
+
         .upload-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
         }
-        
+
         .upload-text {
             font-size: 1.1rem;
             color: var(--text-muted);
         }
-        
+
         .file-input {
             display: none;
         }
-        
+
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
             gap: 1rem;
             align-items: end;
         }
-        
+
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        
+
         label {
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-muted);
         }
-        
+
         input[type="date"] {
             background: var(--surface-light);
             border: 1px solid var(--border);
@@ -142,13 +143,13 @@
             font-size: 1rem;
             transition: all 0.2s ease;
         }
-        
+
         input[type="date"]:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        
+
         button {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -161,45 +162,45 @@
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
-        
+
         button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
         }
-        
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .status {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             display: none;
         }
-        
+
         .status.info {
             background: rgba(37, 99, 235, 0.1);
             border: 1px solid var(--primary);
             color: #93c5fd;
             display: block;
         }
-        
+
         .status.success {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid var(--success);
             color: #6ee7b7;
             display: block;
         }
-        
+
         .status.error {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid var(--error);
             color: #fca5a5;
             display: block;
         }
-        
+
         #graph-container {
             min-height: 400px;
             background: var(--bg);
@@ -209,7 +210,7 @@
             justify-content: center;
             color: var(--text-muted);
         }
-        
+
         .loader {
             border: 4px solid var(--surface-light);
             border-top: 4px solid var(--primary);
@@ -220,38 +221,179 @@
             display: none;
             margin: 2rem auto;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-top: 1.5rem;
         }
-        
+
         .stat-card {
             background: var(--bg);
             padding: 1.5rem;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
-        
+
         .stat-label {
             font-size: 0.875rem;
             color: var(--text-muted);
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-value {
             font-size: 1.75rem;
             font-weight: 700;
             color: var(--text);
         }
-        
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            box-shadow: none;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            transform: none;
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .paste-area {
+            width: 100%;
+            min-height: 300px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        .paste-area:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .instructions {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions h3 {
+            color: #93c5fd;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions kbd {
+            background: var(--surface-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .platform-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-tab {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .platform-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .platform-content {
+            display: none;
+        }
+
+        .platform-content.active {
+            display: block;
+        }
+
+        .info-notice {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #6ee7b7;
+            font-size: 0.9rem;
+        }
+
         footer {
             text-align: center;
             margin-top: 3rem;
@@ -260,38 +402,102 @@
             color: var(--text-muted);
             font-size: 0.875rem;
         }
-        
+
         @media (max-width: 768px) {
             .controls {
                 grid-template-columns: 1fr;
             }
-            
+
             h1 {
                 font-size: 2rem;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>⚡ Energy Stats Processor</h1>
             <p class="subtitle">Analyze your ESB Networks data • No server required • Privacy-first</p>
         </header>
-        
+
         <div class="card">
-            <h2 class="card-title">📁 Upload Your Data</h2>
-            <div class="upload-zone" id="uploadZone">
-                <div class="upload-icon">📊</div>
-                <div class="upload-text">
-                    <strong>Click to upload</strong> or drag and drop your CSV file<br>
-                    <span style="font-size: 0.9rem;">ESB Networks HDF export format</span>
-                </div>
-                <input type="file" id="fileInput" class="file-input" accept=".csv">
+            <h2 class="card-title">📁 Load Your Data</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('upload')">📤 Upload File</button>
+                <button class="tab" onclick="switchTab('paste')">📋 Paste Data</button>
             </div>
+
+            <!-- Upload Tab -->
+            <div id="uploadTab" class="tab-content active">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📊</div>
+                    <div class="upload-text">
+                        <strong>Click to upload</strong> or drag and drop your CSV file<br>
+                        <span style="font-size: 0.9rem;">ESB Networks HDF export format</span>
+                    </div>
+                    <input type="file" id="fileInput" class="file-input" accept=".csv">
+                </div>
+                <div class="info-notice">
+                    ℹ️ <strong>Note:</strong> If file upload doesn't work, try the "Paste Data" tab above!
+                </div>
+            </div>
+
+            <!-- Paste Tab -->
+            <div id="pasteTab" class="tab-content">
+                <div class="instructions">
+                    <h3>📖 How to copy your CSV file:</h3>
+
+                    <div class="platform-tabs">
+                        <button class="platform-tab active" onclick="switchPlatform('windows')">🪟 Windows</button>
+                        <button class="platform-tab" onclick="switchPlatform('mac')">🍎 Mac</button>
+                    </div>
+
+                    <div id="windowsInstructions" class="platform-content active">
+                        <ol>
+                            <li>Find your CSV file in <strong>File Explorer</strong></li>
+                            <li><strong>Right-click</strong> on the file</li>
+                            <li>Choose <strong>"Open with" → "Notepad"</strong></li>
+                            <li>Press <kbd>Ctrl</kbd> + <kbd>A</kbd> to select all text</li>
+                            <li>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy</li>
+                            <li>Come back here and paste into the box below with <kbd>Ctrl</kbd> + <kbd>V</kbd></li>
+                        </ol>
+                    </div>
+
+                    <div id="macInstructions" class="platform-content">
+                        <ol>
+                            <li>Find your CSV file in <strong>Finder</strong></li>
+                            <li><strong>Right-click</strong> (or Control-click) on the file</li>
+                            <li>Choose <strong>"Open With" → "TextEdit"</strong></li>
+                            <li>Press <kbd>⌘ Cmd</kbd> + <kbd>A</kbd> to select all text</li>
+                            <li>Press <kbd>⌘ Cmd</kbd> + <kbd>C</kbd> to copy</li>
+                            <li>Come back here and paste into the box below with <kbd>⌘ Cmd</kbd> + <kbd>V</kbd></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <textarea id="pasteArea" class="paste-area" placeholder="Paste your CSV data here...
+
+Example:
+MPRN,Meter Serial Number,Read Value,Read Type,Read Date and End Time
+10307857139,000000000032272765,0.8590,Active Import Interval (kWh),25-11-2025 01:30
+10307857139,000000000032272765,0.1200,Active Export Interval (kWh),25-11-2025 01:30"></textarea>
+
+                <button style="width: 100%; margin-top: 1rem;" onclick="processPastedData()">
+                    ✅ Process Pasted Data
+                </button>
+
+                <div class="info-notice">
+                    ℹ️ <strong>Processing may take a few moments</strong> for large files (10,000+ rows). Your computer
+                    is doing all the work locally - no data is sent anywhere!
+                </div>
+            </div>
+
             <div id="status" class="status"></div>
         </div>
-        
+
         <div class="card" id="controlsCard" style="display: none;">
             <h2 class="card-title">⚙️ Configure</h2>
             <div class="controls">
@@ -306,40 +512,40 @@
                 <button id="generateBtn" onclick="generateGraph()">Generate Graph</button>
             </div>
         </div>
-        
+
         <div class="card" id="resultsCard" style="display: none;">
             <h2 class="card-title">📈 Results</h2>
             <div class="loader" id="loader"></div>
-            <div id="graph-container">Upload a file to see your energy usage graph</div>
+            <div id="graph-container">Load your data to see energy usage graphs</div>
             <div class="stats-grid" id="statsGrid" style="display: none;"></div>
         </div>
-        
+
         <footer>
             <p>Built with PyScript • Python runs in your browser • Data never leaves your computer</p>
             <p style="margin-top: 0.5rem;">Created by <strong>Tavi</strong> (Google Antigravity AI)</p>
         </footer>
     </div>
-    
+
     <!-- PyScript Configuration -->
     <script type="py" config='{"packages": ["pandas", "matplotlib", "numpy"]}' src="./energy_processor_web.py"></script>
-    
+
     <script>
         // JavaScript <-> Python bridge
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
         const statusDiv = document.getElementById('status');
-        
+
         uploadZone.addEventListener('click', () => fileInput.click());
-        
+
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadZone.classList.add('dragover');
         });
-        
+
         uploadZone.addEventListener('dragleave', () => {
             uploadZone.classList.remove('dragover');
         });
-        
+
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
@@ -348,17 +554,17 @@
                 handleFile(file);
             }
         });
-        
+
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 handleFile(file);
             }
         });
-        
+
         function handleFile(file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const content = e.target.result;
                 // Call Python function
                 if (window.processCSV) {
@@ -369,26 +575,26 @@
             };
             reader.readAsText(file);
         }
-        
+
         function showStatus(message, type = 'info') {
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
         }
-        
+
         function showControls() {
             document.getElementById('controlsCard').style.display = 'block';
             document.getElementById('resultsCard').style.display = 'block';
         }
-        
+
         function showLoader() {
             document.getElementById('loader').style.display = 'block';
             document.getElementById('graph-container').innerHTML = '';
         }
-        
+
         function hideLoader() {
             document.getElementById('loader').style.display = 'none';
         }
-        
+
         function showStats(stats) {
             const statsGrid = document.getElementById('statsGrid');
             statsGrid.style.display = 'grid';
@@ -411,7 +617,7 @@
                 </div>
             `;
         }
-        
+
         function generateGraph() {
             if (window.generateGraphPython) {
                 const startDate = document.getElementById('startDate').value;
@@ -421,4 +627,5 @@
         }
     </script>
 </body>
+
 </html>

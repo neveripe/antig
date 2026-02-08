@@ -56,41 +56,12 @@ It expects a CSV file with columns including:
 *   `--end-date <YYYY-MM-DD>`: Filter end date.
 *   `--smoothing-method <method>`: `rolling` or `spline`.
 *   `--smoothing-param <value>`: Window size for rolling mean (default: 3).
-*   `-v, --verbose`: Increase verbosity (`-v` for INFO, `-vv` for DEBUG).
 
 ### Example
 
 ```bash
 python -m src.main my_data.csv --output-sql my_data.sql --smoothing-method spline --timezone "Europe/Dublin"
 ```
-
-## Building Windows Executable
-
-To create a standalone `.exe` file that works without Python installed:
-
-1.  **Install PyInstaller:**
-    ```bash
-    pip install pyinstaller
-    ```
-
-2.  **Build the executable:**
-    ```bash
-    pyinstaller energy-processor.spec
-    ```
-    
-    Or use the automated script:
-    ```bash
-    build_exe.bat
-    ```
-
-3.  **Find your executable:**
-    ```
-    dist/energy-processor.exe
-    ```
-
-The executable can be distributed to any Windows machine and run without Python installed.
-
-📖 **See [docs/BUILD_EXECUTABLE.md](docs/BUILD_EXECUTABLE.md) for detailed build instructions.**
 
 ## Documentation
 

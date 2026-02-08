@@ -1,15 +1,10 @@
 import argparse
 import os
-import sys
-from pathlib import Path
 from src.adapters.csv_ingester import CSVIngester
 from src.adapters.postgres_exporter import PostgresExporter
 from src.adapters.graph_plotter import GraphPlotter
-from src.utils.logging_config import setup_logging, get_logger
 from datetime import datetime
 import pandas as pd
-
-logger = get_logger(__name__)
 
 def main():
     """
@@ -28,109 +23,72 @@ def main():
     parser.add_argument("--output-graph-file", help="Filename for the output graph (e.g. my_graph.png)")
     parser.add_argument("--smoothing-method", choices=["rolling", "spline"], help="Smoothing method for graphs")
     parser.add_argument("--smoothing-param", type=float, help="Smoothing parameter (window size for rolling)")
-    parser.add_argument("-v", "--verbose", action="count", default=0,
-                        help="Increase verbosity (-v for INFO, -vv for DEBUG)")
     
     args = parser.parse_args()
     
-    # Setup logging based on verbosity
-    setup_logging(args.verbose)
-    
-    # Validate input file exists
-    input_path = Path(args.input_file)
-    if not input_path.exists():
-        logger.error(f"File not found: {args.input_file}")
-        return 1
-    
-    if not input_path.is_file():
-        logger.error(f"Not a file: {args.input_file}")
-        return 1
-    
-    logger.info(f"Processing {args.input_file}")
+    print(f"Processing {args.input_file}...")
     
     # 1. Ingest
     ingester = CSVIngester(timezone=args.timezone)
     try:
         series = ingester.parse(args.input_file)
-        logger.info(f"Loaded {len(series.readings)} readings")
-    except FileNotFoundError:
-        logger.error(f"File not found: {args.input_file}")
-        return 1
-    except pd.errors.EmptyDataError:
-        logger.error(f"File is empty: {args.input_file}")
-        return 1
-    except pd.errors.ParserError as e:
-        logger.error(f"Invalid CSV format: {e}")
-        return 1
-    except ValueError as e:
-        logger.error(f"Data validation error: {e}")
-        logger.debug("Full error details:", exc_info=True)
-        return 1
+        print(f"Loaded {len(series.readings)} readings.")
     except Exception as e:
-        logger.error(f"Unexpected error reading file: {e}")
-        logger.debug("Full traceback:", exc_info=True)
-        return 1
+        print(f"Error reading file: {e}")
+        return
 
     # Filter by date if requested
     if args.start_date or args.end_date:
-        try:
-            start = datetime.strptime(args.start_date, "%Y-%m-%d") if args.start_date else None
-            end = datetime.strptime(args.end_date, "%Y-%m-%d") if args.end_date else None
-        except ValueError as e:
-            logger.error(f"Invalid date format. Use YYYY-MM-DD (e.g., 2023-01-15)")
-            logger.debug(f"Date parsing error: {e}")
-            return 1
+        start = datetime.strptime(args.start_date, "%Y-%m-%d") if args.start_date else None
+        end = datetime.strptime(args.end_date, "%Y-%m-%d") if args.end_date else None
         
-        # Convert dates to UTC using the input timezone
-        # This matches user expectation: "I want data from 2022-10-30 (Irish time)"
+        # We need to handle timezone for start/end if the series is timezone aware (which it is, UTC)
+        # The user likely provides "local" dates (e.g. "2022-10-30").
+        # If we just compare naive start/end with UTC series, it might be off.
+        # But `filter_by_date` handles naive comparison by assuming same TZ.
+        # However, `series.df['timestamp']` is UTC.
+        # So we should probably convert start/end to UTC?
+        # Or, we can localize start/end to the INPUT timezone, then convert to UTC.
+        # This matches user expectation: "I want data from 2022-10-30 (Irish time)".
+        
         if args.timezone:
             if start:
                 start = pd.Timestamp(start).tz_localize(args.timezone).tz_convert('UTC')
             if end:
+                # For end date, we usually want the END of the day if only YYYY-MM-DD is provided?
+                # Or exact timestamp?
+                # If user says --end-date 2022-10-30, they probably mean inclusive of that day?
+                # Or just 00:00?
+                # Let's assume 00:00 for now to keep it simple, or maybe add 23:59:59 if it was just a date?
+                # The prompt didn't specify. Let's stick to exact parsing for now.
                 end = pd.Timestamp(end).tz_localize(args.timezone).tz_convert('UTC')
         
-        logger.debug(f"Filtering data from {start} to {end} (UTC)")
         series = series.filter_by_date(start, end)
-        logger.info(f"Filtered to {len(series.readings)} readings")
+        print(f"Filtered to {len(series.readings)} readings.")
 
     # 2. Generate SQL
-    logger.info("Generating SQL")
+    print("Generating SQL...")
     exporter = PostgresExporter(table_name="energy_readings")
-    try:
-        sql_content = exporter.generate_sql(series)
-        with open(args.output_sql, "w") as f:
-            f.write(sql_content)
-        logger.info(f"SQL written to {args.output_sql}")
-    except PermissionError:
-        logger.error(f"Permission denied: cannot write to {args.output_sql}")
-        return 1
-    except Exception as e:
-        logger.error(f"Error generating SQL: {e}")
-        logger.debug("Full traceback:", exc_info=True)
-        return 1
+    sql_content = exporter.generate_sql(series)
+    with open(args.output_sql, "w") as f:
+        f.write(sql_content)
+    print(f"SQL written to {args.output_sql}")
 
     # 3. Generate Graphs
-    logger.info("Generating graphs")
+    print("Generating Graphs...")
     plotter = GraphPlotter()
-    try:
-        files = plotter.generate_graphs(series, args.output_graphs, output_file=args.output_graph_file,
-                                       smoothing_method=args.smoothing_method, smoothing_param=args.smoothing_param)
-        logger.info(f"Graphs generated in {args.output_graphs}:")
-        for f in files:
-            logger.info(f"  - {f}")
-    except Exception as e:
-        logger.error(f"Error generating graphs: {e}")
-        logger.debug("Full traceback:", exc_info=True)
-        return 1
+    files = plotter.generate_graphs(series, args.output_graphs, output_file=args.output_graph_file,
+                                   smoothing_method=args.smoothing_method, smoothing_param=args.smoothing_param)
+    print(f"Graphs generated in {args.output_graphs}:")
+    for f in files:
+        print(f" - {f}")
 
-    # 4. Summary Stats (always shown)
-    logger.warning("\nSummary Stats:")  # WARNING level always displays
-    logger.warning(f"Net Consumption: {series.calculate_net_consumption():.2f} kWh")
+    # 4. Print Stats
+    print("\nSummary Stats:")
+    print(f"Net Consumption: {series.calculate_net_consumption():.2f} kWh")
     
     daily = series.get_daily_stats()
-    logger.warning(f"Days processed: {len(daily)}")
-    
-    return 0
+    print(f"Days processed: {len(daily)}")
 
 if __name__ == "__main__":
     main()

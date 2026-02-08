@@ -1,15 +1,34 @@
 """
 Tests for web-specific CSV ingester.
 Tests the WebCSVIngester class that adapts CSV ingestion for browser environment.
+
+NOTE: These tests are marked with @pytest.mark.browser because they import
+web/energy_processor_web.py which requires PyScript modules (js, pyodide, pyscript)
+that are only available in browser environments. They are skipped in CI/CD.
 """
 
 import pytest
 from datetime import datetime
 import pandas as pd
-from web.energy_processor_web import WebCSVIngester
-from src.domain.models import EnergySeries
+
+# Try to import web module, skip all tests if not available (non-browser environment)
+try:
+    from web.energy_processor_web import WebCSVIngester
+    from src.domain.models import EnergySeries
+    BROWSER_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    BROWSER_AVAILABLE = False
+    WebCSVIngester = None  # type: ignore
+    EnergySeries = None  # type: ignore
+
+# Skip entire module if browser dependencies not available
+pytestmark = pytest.mark.skipif(
+    not BROWSER_AVAILABLE,
+    reason="Requires PyScript modules (js, pyodide, pyscript) - browser environment only"
+)
 
 
+@pytest.mark.browser
 class TestWebCSVIngester:
     """Test suite for WebCSVIngester class."""
     
@@ -155,6 +174,7 @@ value1,value2,value3"""
         assert not series.df.empty
 
 
+@pytest.mark.browser
 class TestWebIntegration:
     """Integration tests for web-specific functionality."""
     

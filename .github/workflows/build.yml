@@ -30,7 +30,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        python -m pytest
+        python -m pytest -m "not browser"
 
     - name: Build with PyInstaller
       run: |

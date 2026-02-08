@@ -625,6 +625,67 @@ MPRN,Meter Serial Number,Read Value,Read Type,Read Date and End Time
                 window.generateGraphPython(startDate, endDate);
             }
         }
+
+        // Tab switching
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.getElementById('uploadTab').classList.remove('active');
+            document.getElementById('pasteTab').classList.remove('active');
+
+            if (tab === 'upload') {
+                document.getElementById('uploadTab').classList.add('active');
+            } else {
+                document.getElementById('pasteTab').classList.add('active');
+            }
+        }
+
+        // Platform instructions switching
+        function switchPlatform(platform) {
+            // Update platform buttons
+            document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update instructions
+            document.getElementById('windowsInstructions').classList.remove('active');
+            document.getElementById('macInstructions').classList.remove('active');
+
+            if (platform === 'windows') {
+                document.getElementById('windowsInstructions').classList.add('active');
+            } else {
+                document.getElementById('macInstructions').classList.add('active');
+            }
+        }
+
+        // Process pasted data
+        function processPastedData() {
+            const pasteArea = document.getElementById('pasteArea');
+            const content = pasteArea.value.trim();
+
+            if (!content) {
+                showStatus('❌ Please paste your CSV data first', 'error');
+                return;
+            }
+
+            // Validate it looks like CSV
+            if (!content.includes(',') || !content.includes('\n')) {
+                showStatus('❌ This doesn\'t look like CSV data. Make sure you copied the entire file content!', 'error');
+                return;
+            }
+
+            showStatus('⏳ Processing pasted data...', 'info');
+
+            // Call Python function with pasted content
+            if (window.processCSV) {
+                window.processCSV(content, 'pasted-data.csv');
+            } else {
+                showStatus('PyScript is still loading, please wait a moment...', 'info');
+                setTimeout(() => processPastedData(), 1000);
+            }
+        }
     </script>
 </body>
 

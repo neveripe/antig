@@ -10,6 +10,10 @@ This folder contains documentation and plans generated during AI-assisted develo
 - **bundling_walkthrough.md** - Implementation walkthrough documenting the build system and verification results
 - **verification_guide.md** - Step-by-step manual testing guide for the bundled web application
 
+### CI/CD Fixes (Feb 2026)
+
+- **ci_fix_walkthrough.md** - Fixing GitHub Actions test failure caused by PyScript browser-only dependencies
+
 ## Purpose
 
 These documents serve as:

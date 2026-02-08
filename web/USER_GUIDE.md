@@ -89,23 +89,45 @@ Follow these steps **exactly** as written:
 
 ---
 
-## Part 3: Use the Energy Processor Tool
+## Part 3: Extract and Set Up the Energy Processor
 
-### Step 8: Open the Energy Processor
+### Step 8: Download and Extract the ZIP File
 
-1. Find the **index.html** file (or **Energy Processor.html** - it may have been renamed)
-   - Check where the person who gave you this file told you to save it
-   - If you downloaded it, check your **Downloads** folder
-   - It might be on your **Desktop**
-   - Look for a file with an icon that looks like a web browser
+If you received the Energy Processor as a ZIP file:
+
+**For Windows:**
+1. Find the **Energy-Processor-Web-v*.zip** file (in Downloads or wherever you saved it)
+2. **Right-click** on the ZIP file
+3. Click **"Extract All..."**
+4. A window will appear asking where to extract
+5. Click the **"Extract"** button (it will create a new folder)
+6. Wait for the extraction to finish
+7. Open the new folder that was created
+
+**For Mac:**
+1. Find the **Energy-Processor-Web-v*.zip** file (in Downloads or wherever you saved it)
+2. **Double-click** the ZIP file
+3. macOS will automatically extract it to the same folder
+4. Open the newly extracted folder
+
+> **Important:** You must extract the files from the ZIP before using them. Double-clicking the HTML file while it's still inside the ZIP may not work properly!
+
+### Step 9: Open the Energy Processor
+
+1. Inside the extracted folder, find the **Energy-Processor.html** file
+   - It should have an icon that looks like a web browser (Chrome, Firefox, Edge, or Safari)
 2. **Double-click** the file to open it
 3. It will open in your web browser
 4. Wait **10-15 seconds** for the page to fully load
    - You'll know it's ready when you see: **"✅ Ready to process your energy data"**
 
-> **Can't find the file?** Search your computer for "index.html" or "Energy Processor". Ask the person who gave you this tool where they saved it.
+> **Can't find the file?** Make sure you extracted the ZIP file first (see Step 8). The HTML file won't work properly if you try to open it directly from inside the ZIP.
 
-### Step 9: Paste Your Data
+---
+
+## Part 4: Process Your Energy Data
+
+### Step 10: Paste Your Data
 
 1. On the webpage, you'll see two tabs at the top:
    - **📁 Upload CSV** 
@@ -117,7 +139,7 @@ Follow these steps **exactly** as written:
    - Your data should fill the box
 6. Click the green button that says **"✅ Process Pasted Data"**
 
-### Step 10: Wait for Processing
+### Step 11: Wait for Processing
 
 1. You'll see a message saying **"⏳ Processing pasted data..."**
 2. Wait a few seconds (usually 2-5 seconds)
